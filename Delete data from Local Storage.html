@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Data Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>User Data Management</h1>
+    <form id="userDataForm">
+        <input type="text" id="nameInput" placeholder="Name" required>
+        <input type="email" id="emailInput" placeholder="Email" required>
+        <input type="tel" id="phoneInput" placeholder="Phone" required>
+        <button type="submit" id="submitBtn">Submit</button>
+    </form>
+
+    <div id="userData"></div>
+
+<style>
+/* Basic styles, adjust as needed */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 20px;
+}
+
+input, button {
+    margin: 5px;
+    padding: 8px;
+}
+
+#userData {
+    margin-top: 20px;
+}
+
+.userEntry {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.deleteBtn {
+    background-color: #ff6347;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+</style>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const userDataForm = document.getElementById('userDataForm');
+    const userDataDiv = document.getElementById('userData');
+
+    userDataForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById('nameInput').value;
+        const email = document.getElementById('emailInput').value;
+        const phone = document.getElementById('phoneInput').value;
+
+        if (name && email && phone) {
+            const userData = {
+                name,
+                email,
+                phone
+            };
+
+            displayUserData(userData);
+            clearFormInputs();
+        } else {
+            alert('Please fill in all fields.');
+        }
+    });
+
+    function displayUserData(userData) {
+        const userEntry = document.createElement('div');
+        userEntry.classList.add('userEntry');
+        userEntry.innerHTML = `
+            <p><strong>Name:</strong> ${userData.name}</p>
+            <p><strong>Email:</strong> ${userData.email}</p>
+            <p><strong>Phone:</strong> ${userData.phone}</p>
+            <button class="deleteBtn">Delete</button>
+        `;
+
+        userEntry.querySelector('.deleteBtn').addEventListener('click', function() {
+            userDataDiv.removeChild(userEntry);
+        });
+
+        userDataDiv.appendChild(userEntry);
+    }
+
+    function clearFormInputs() {
+        document.getElementById('nameInput').value = '';
+        document.getElementById('emailInput').value = '';
+        document.getElementById('phoneInput').value = '';
+    }
+});
+
+</script>
+</body>
+</html>
