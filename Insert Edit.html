@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Data Management</title>
+    <style>
+        /* Basic styles, adjust as needed */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 20px;
+}
+
+input, button {
+    margin: 5px;
+    padding: 8px;
+}
+
+#userData {
+    margin-top: 20px;
+}
+
+.userEntry {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 5px;
+}
+
+.deleteBtn, .editBtn {
+    background-color: #ff6347;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+      </style>  
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const userDataForm = document.getElementById('userDataForm');
+    const userDataDiv = document.getElementById('userData');
+
+    userDataForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById('nameInput').value;
+        const email = document.getElementById('emailInput').value;
+        const phone = document.getElementById('phoneInput').value;
+
+        if (name && email && phone) {
+            const userData = {
+                name,
+                email,
+                phone
+            };
+
+            displayUserData(userData);
+            clearFormInputs();
+        } else {
+            alert('Please fill in all fields.');
+        }
+    });
+
+    function displayUserData(userData) {
+        const userEntry = document.createElement('div');
+        userEntry.classList.add('userEntry');
+        userEntry.innerHTML = `
+            <p><strong>Name:</strong> <span class="name">${userData.name}</span></p>
+            <p><strong>Email:</strong> <span class="email">${userData.email}</span></p>
+            <p><strong>Phone:</strong> <span class="phone">${userData.phone}</span></p>
+            <button class="deleteBtn">Delete</button>
+            <button class="editBtn">Edit</button>
+        `;
+
+        userEntry.querySelector('.deleteBtn').addEventListener('click', function() {
+            userDataDiv.removeChild(userEntry);
+        });
+
+        userEntry.querySelector('.editBtn').addEventListener('click', function() {
+            editUserData(userEntry);
+        });
+
+        userDataDiv.appendChild(userEntry);
+    }
+
+    function editUserData(userEntry) {
+        const nameField = userEntry.querySelector('.name');
+        const emailField = userEntry.querySelector('.email');
+        const phoneField = userEntry.querySelector('.phone');
+
+        const name = prompt('Edit Name:', nameField.textContent);
+        const email = prompt('Edit Email:', emailField.textContent);
+        const phone = prompt('Edit Phone:', phoneField.textContent);
+
+        if (name && email && phone) {
+            nameField.textContent = name;
+            emailField.textContent = email;
+            phoneField.textContent = phone;
+        }
+    }
+
+    function clearFormInputs() {
+        document.getElementById('nameInput').value = '';
+        document.getElementById('emailInput').value = '';
+        document.getElementById('phoneInput').value = '';
+    }
+});
+
+</script>
+
+</head>
+<body>
+    <h1>User Data Management</h1>
+    <form id="userDataForm">
+        <input type="text" id="nameInput" placeholder="Name" required>
+        <input type="email" id="emailInput" placeholder="Email" required>
+        <input type="tel" id="phoneInput" placeholder="Phone" required>
+        <button type="submit" id="submitBtn">Submit</button>
+    </form>
+
+    <div id="userData"></div>
+
+   
+</body>
+</html>
