@@ -1,0 +1,13 @@
+// Incorrect way - Overwriting users with a new user
+let users = []; // Assuming this is your user data
+
+function addUser(newUser) {
+    users = newUser; // Overwrites the existing users array with just the new user
+}
+
+// Adding users
+addUser({ name: 'Old User' });
+console.log(users); // Shows { name: 'Old User' }
+
+addUser({ name: 'New User' }); // The older user gets replaced with the new user
+console.log(users); // Only shows { name: 'New User' }, the old user is gone
