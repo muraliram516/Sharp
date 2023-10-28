@@ -1,0 +1,49 @@
+ Static dataset for dates and times (in a real app, this might come from a backend)
+const appointments = [
+    { date '2023-11-01', times ['1000', '1100', '1500'] },
+    { date '2023-11-02', times ['0900', '1400', '1600'] },
+    { date '2023-11-03', times ['1100', '1200', '1500'] },
+     Add more dates and times as needed
+];
+
+const calendar = document.getElementById('calendar');
+const selectedDate = document.getElementById('selectedDate');
+
+ Function to generate the calendar
+function generateCalendar() {
+    appointments.forEach(appointment = {
+        const dayDiv = document.createElement('div');
+        dayDiv.classList.add('day');
+        dayDiv.textContent = appointment.date;
+        dayDiv.dataset.date = appointment.date;
+        dayDiv.addEventListener('click', selectDate);
+        calendar.appendChild(dayDiv);
+    });
+}
+
+ Function to select the date
+function selectDate(event) {
+    const selected = document.querySelector('.selected');
+    if (selected) {
+        selected.classList.remove('selected');
+    }
+    event.target.classList.add('selected');
+    const date = event.target.dataset.date;
+    displayTimes(date);
+}
+
+ Function to display available times for the selected date
+function displayTimes(date) {
+    const selected = appointments.find(appointment = appointment.date === date);
+    selectedDate.innerHTML = `h2Available Times for ${date}h2`;
+    if (selected) {
+        selected.times.forEach(time = {
+            const timeDiv = document.createElement('div');
+            timeDiv.textContent = time;
+            selectedDate.appendChild(timeDiv);
+        });
+    }
+}
+
+ Generate the calendar when the page loads
+generateCalendar();

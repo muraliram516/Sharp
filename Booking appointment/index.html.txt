@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Appointment App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Book an Appointment</h1>
+    <div id="calendar"></div>
+    <div id="selectedDate"></div>
+    <script src="script.js"></script>
+</body>
+</html>
