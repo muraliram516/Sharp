@@ -1,0 +1,301 @@
+<!-- index.html-->
+
+<!DOCTYPE html> 
+<html lang="en"> 
+
+<head> 
+	<meta charset="UTF-8" /> 
+	<meta name="viewport"
+		content="width=device-width, 
+				initial-scale=1.0" /> 
+	 
+	<title>Expense Tracker</title> 
+
+    <style>
+
+body { 
+	display: flexbox; 
+	text-align: center; 
+	align-items: center; 
+} 
+
+
+.summary { 
+	width: 25rem; 
+	display: flex; 
+	flex-direction: column; 
+	text-align: center; 
+	margin: auto; 
+	margin-bottom: 40px; 
+	padding: 1%; 
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); 
+} 
+
+
+.total { 
+	display: flex; 
+	flex-direction: row; 
+	margin: auto; 
+} 
+
+.total>div { 
+	width: 200px; 
+} 
+
+
+.root { 
+	width: fit-content; 
+	background-color: white; 
+	display: flex; 
+	margin: auto; 
+	padding: 2%; 
+	padding-top: 1%; 
+	justify-content: center; 
+	text-align: center; 
+	border-width: 6px; 
+	border: 6px grey; 
+	box-sizing: content-box; 
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); 
+	min-height: 30vh; 
+} 
+
+.vertical { 
+	color: rgb(35, 35, 106); 
+	margin: 0 2%; 
+	border-width: 2px; 
+} 
+
+#table { 
+	border-collapse: collapse; 
+	width: 50vw; 
+	border: 1px solid #ddd; 
+	font-size: 18px; 
+} 
+
+
+#table th, 
+#table td { 
+    border: 1px solid black;
+	text-align: left; 
+	padding: 12px; 
+} 
+
+/* Table row */
+#table tr { 
+	border-bottom: 1px solid #ddd; 
+} 
+
+/* Headings*/
+#table tr.titles { 
+	background-color: rgb(144, 182, 238); 
+} 
+
+/* Style for each input item */
+.inputitem { 
+	display: flex; 
+	flex-direction: row; 
+	font-weight: bolder; 
+	font-size: large; 
+	padding: 1%; 
+} 
+
+input, 
+select, 
+option { 
+	padding: 2%; 
+	border-radius: 5px; 
+	margin: 2%; 
+} 
+
+button { 
+	font-size: large; 
+	border-radius: 5px; 
+	padding: 1%; 
+} 
+
+.zoom { 
+	color: black; 
+	transition: transform .2s; 
+
+} 
+
+.zoom:hover { 
+	transform: scale(1.23); 
+
+	color: green; 
+}
+
+    </style>
+
+    <script>
+
+let tableEntries = [ 
+
+]; 
+
+// Function to update data expense summary 
+function updateSummary() { 
+	// let totalIncome = tableEntries.reduce((t, e) => { 
+	// 	if (e.type === 1) t += e.amount; 
+	// 	return t; 
+	// }, 0); 
+	let totalExpense = tableEntries.reduce((ex, e) => { 
+		if (e.type !='') ex += e.amount; 
+		return ex; 
+	}, 0); 
+	//updatedInc.innerText = totalIncome; 
+	updatedExp.innerText = totalExpense; 
+	//updatedBal.innerText = totalIncome - totalExpense; 
+} 
+
+
+// Function to add new entry to the dataset and expense table 
+function addItem() { 
+	let type = itemType.value; 
+	let name = document.getElementById("Description"); 
+	let amount = document.getElementById("amount"); 
+
+	// Input validation 
+	if (name.value === "" || Number(amount.value) === 0) 
+		return alert("Incorrect Input"); 
+	if (Number(amount.value) <= 0) 
+		return alert( 
+			"Incorrect amount! can't add negative"
+		); 
+
+	// Push new data 
+	tableEntries.push({ 
+		type: type, 
+		name: name.value, 
+		amount: Number(amount.value), 
+	}); 
+
+	updateTable(); 
+	name.value = ""; 
+	amount.value = 0; 
+} 
+
+// Function to load all entry in the expense table 
+function loadItems(e, i) { 
+	let cls; 
+
+	let table = document.getElementById("table"); 
+	let row = table.insertRow(i + 1); 
+	let cell0 = row.insertCell(0); 
+	let cell1 = row.insertCell(1); 
+	let cell2 = row.insertCell(2); 
+	let c3 = row.insertCell(3); 
+	let c4 = row.insertCell(4); 
+	cell0.innerHTML = i + 1; 
+	cell1.innerHTML = e.name; 
+	cell2.innerHTML = e.amount; 
+	c4.innerHTML = "☒"; 
+	c4.classList.add("zoom"); 
+	c4.addEventListener("click", () => del(e)); 
+
+		cls = "red"; 
+		c3.innerHTML = e.type; 
+	c3.style.color = cls; 
+} 
+
+// Clear the table before updation 
+function remove() { 
+	while (table.rows.length > 1) table.deleteRow(-1); 
+} 
+
+
+function del(el) { 
+	remove(); 
+	tableEntries = tableEntries.filter( 
+		(e) => e.name !== el.name 
+	); 
+	tableEntries.map((e, i) => loadItems(e, i)); 
+	updateSummary(); 
+} 
+ 
+function updateTable() { 
+	remove(); 
+	tableEntries.map((e, i) => { 
+		loadItems(e, i); 
+	}); 
+	updateSummary(); 
+} 
+
+updateTable();
+ 
+    </script>
+</head> 
+
+<body> 
+	<div> 
+		<h1>Expense Tracker</h1> 
+	</div> 
+	<div class="summary"> 
+		<div> 
+			<h1> Total Expenses: 
+				<h2 style="color: red;"
+						id="updatedExp"> 
+						0 
+					</h2>  
+			</h1> 
+		</div> 
+		<br /> 
+		
+	</div> 
+	<div class="root"> 
+		<div id="new"> 
+			<h2>Add new</h2> 
+
+			<div class="inputs"> 
+				<div class="inputitem"> 
+					<p style="width: 9rem"> 
+						Entry type: 
+					</p> 
+					<select id='itemType'> 
+						<option value="Travel" selected>Travel</option> 
+						<option value="Movie">Movie</option> 
+						<option value="Food">Food</option> 
+						<option value="Snacks">Snacks</option> 
+						<option value="Education">Education</option> 
+
+                    </select> 
+				</div> 
+				<div class="inputitem"> 
+					<p style="width: 9rem">Description:</p> 
+					<input id="Description"
+						type="text"
+						value=""
+						placeholder="name" /> 
+				</div> 
+				<div class="inputitem"> 
+					<p style="width: 9rem">Amount:</p> 
+					<input value="0"
+						id="amount"
+						name="mod"
+						type="number"
+						placeholder="amount" /> 
+				</div> 
+			</div> 
+			<button onclick="addItem()"> 
+				Add Expense 
+			</button> 
+		</div> 
+
+        <div id="items"> 
+			<h2>Expenses</h2> 
+			<table id="table"> 
+				<tr class="titles"> 
+					<th>S.no.</th> 
+					<th>Name</th> 
+					<th>Amount</th> 
+					<th>Type</th> 
+					<th>Delete</th> 
+				</tr> 
+			</table> 
+		</div> 
+		<hr class="vertical" /> 
+	</div> 
+	 
+</body> 
+
+</html>
