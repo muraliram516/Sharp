@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Information</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Add custom styles if needed */
+  </style>
+</head>
+<body>
+
+<div class="container mt-5">
+  <form id="userForm">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" class="form-control" id="name" required>
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" class="form-control" id="email" required>
+    </div>
+    <div class="form-group">
+      <label for="phone">Phone Number</label>
+      <input type="tel" class="form-control" id="phone" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <input type="hidden" id="editIndex">
+  </form>
+
+  <div class="mt-4">
+    <h2>User List</h2>
+    <ul id="userList" class="list-group">
+      <!-- User information will be listed here -->
+    </ul>
+  </div>
+</div>
+
+<script>
+  document.getElementById('userForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+
+    const editIndex = document.getElementById('editIndex').value;
+
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+
+    if (editIndex !== '') {
+      users[editIndex] = { name, email, phone };
+    } else {
+      users.push({ name, email, phone });
+    }
+
+    localStorage.setItem('users', JSON.stringify(users));
+
+    displayUsers();
+    document.getElementById('userForm').reset();
+    document.getElementById('editIndex').value = '';
+  });
+
+  function displayUsers() {
+    const userList = document.getElementById('userList');
+    userList.innerHTML = '';
+
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+
+    users.forEach((user, index) => {
+      const listItem = document.createElement('li');
+      listItem.className = 'list-group-item';
+      listItem.innerHTML = `
+        ${user.name} | ${user.email} | ${user.phone}
+        <button class="btn btn-info btn-sm mx-2" onclick="populateForm(${index})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser(${index})">Delete</button>
+      `;
+      userList.appendChild(listItem);
+    });
+  }
+
+  function populateForm(index) {
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const user = users[index];
+
+    document.getElementById('name').value = user.name;
+    document.getElementById('email').value = user.email;
+    document.getElementById('phone').value = user.phone;
+
+    document.getElementById('editIndex').value = index;
+  }
+
+  function deleteUser(index) {
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    users.splice(index, 1);
+    localStorage.setItem('users', JSON.stringify(users));
+
+    displayUsers();
+  }
+
+  displayUsers();
+</script>
+
+</body>
+</html>
