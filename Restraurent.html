@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        #order-list, #table-list {
+            margin-top: 20px;
+        }
+
+        .order-item {
+            cursor: pointer;
+        }
+
+        .order-item:hover {
+            background-color: #eee;
+        }
+    </style>
+    <title>Restaurant Order System</title>
+</head>
+<body>
+
+<div class="container">
+    <h2>Restaurant Order System</h2>
+
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="price">Price:</label>
+            <input type="text" class="form-control" id="price" placeholder="Enter price">
+        </div>
+        <div class="form-group col-md-3">
+            <label for="dish">Dish:</label>
+            <input type="text" class="form-control" id="dish" placeholder="Enter dish">
+        </div>
+        <div class="form-group col-md-3">
+            <label for="table">Table:</label>
+            <select class="form-control" id="table">
+                <option value="table1">Table 1</option>
+                <option value="table2">Table 2</option>
+                <option value="table3">Table 3</option>
+            </select>
+        </div>
+        <div class="form-group col-md-3">
+            <button type="button" class="btn btn-primary" onclick="addToBill()">Add to Bill</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div id="order-list">
+                <h3>Order List</h3>
+                <ul class="list-group" id="orders">
+                    <!-- Order items will be dynamically added here -->
+                </ul>
+                <button type="button" class="btn btn-danger" onclick="deleteOrder()">Delete Order</button>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div id="table-list">
+                <h3>Table List</h3>
+                <ul class="list-group" id="tables">
+                    <!-- Table items will be dynamically added here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function addToBill() {
+        var price = document.getElementById("price").value;
+        var dish = document.getElementById("dish").value;
+        var table = document.getElementById("table").value;
+
+        var orderList = document.getElementById("orders");
+        var listItem = document.createElement("li");
+        listItem.className = "list-group-item order-item";
+        listItem.innerHTML = `<strong>Table:</strong> ${table}, <strong>Dish:</strong> ${dish}, <strong>Price:</strong> ${price}`;
+        orderList.appendChild(listItem);
+
+        // Update table list
+        updateTableList(table);
+    }
+
+    function deleteOrder() {
+        var orderList = document.getElementById("orders");
+        var selectedOrders = document.querySelectorAll(".order-item.active");
+
+        selectedOrders.forEach(function (order) {
+            orderList.removeChild(order);
+
+            // Update table list after order removal
+            var table = order.querySelector('strong:contains("Table:")').nextSibling.nodeValue.trim();
+            updateTableList(table);
+        });
+    }
+
+    function updateTableList(table) {
+        var tableList = document.getElementById("tables");
+        var existingTableItem = document.querySelector(`#tables li:contains("${table}")`);
+
+        // Remove the existing table item if it exists
+        if (existingTableItem) {
+            tableList.removeChild(existingTableItem);
+        }
+
+        // Create and add a new table item
+        var tableItem = document.createElement("li");
+        tableItem.className = "list-group-item";
+        tableItem.textContent = table;
+        tableList.appendChild(tableItem);
+    }
+
+    // Custom jQuery :contains selector case-insensitive
+    jQuery.expr[':'].contains = function (a, i, m) {
+        return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+    };
+
+    // Add click event listener to order items for selection
+    $(document).on('click', '.order-item', function() {
+        $(this).toggleClass('active');
+    });
+</script>
+
+</body>
+</html>
