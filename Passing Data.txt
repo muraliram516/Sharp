@@ -1,0 +1,40 @@
+import React from 'react';
+
+const ExpenseItem = (props) => {
+  const { expenseTitle, expenseAmount, expenseDate, locationOfExpenditure } = props;
+
+  return (
+    <div>
+      <div>{expenseDate.toISOString()}</div>
+      <div>
+        <h2>{expenseTitle}</h2>
+        <div>${expenseAmount}</div>
+        <div>Location: {locationOfExpenditure}</div>
+      </div>
+    </div>
+  );
+};
+
+const ExpenseList = () => {
+  // Example array of expenses
+  const expenses = [
+    { title: 'Car Insurance', amount: 294.67, date: new Date(2023, 3, 15), location: 'Gas Station' },
+    // Add more expense objects as needed
+  ];
+
+  return (
+    <div>
+      {expenses.map((expense, index) => (
+        <ExpenseItem
+          key={index} // Ensure each component has a unique key
+          expenseTitle={expense.title}
+          expenseAmount={expense.amount}
+          expenseDate={expense.date}
+          locationOfExpenditure={expense.location}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default ExpenseList;
