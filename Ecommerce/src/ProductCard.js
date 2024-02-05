@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 const CartComponent = () => {
-    // Initial hardcoded cart elements
     const [cartElements, setCartElements] = useState([
         {
             title: 'Colors',
@@ -22,15 +21,27 @@ const CartComponent = () => {
             quantity: 1,
         }
     ]);
+    const [purchaseMessage, setPurchaseMessage] = useState('');
 
-    // Function to handle removal of an item from the cart
     const removeFromCart = (index) => {
         const newCartElements = cartElements.filter((item, itemIndex) => index !== itemIndex);
         setCartElements(newCartElements);
+        setPurchaseMessage(''); // Clear the purchase message when an item is removed
+    };
+
+    const handlePurchase = () => {
+        if (cartElements.length > 0) {
+            setPurchaseMessage('Thanks for your purchase!');
+            setCartElements([]); // Clear the cart after purchase
+        } else {
+            setPurchaseMessage('You have Nothing in Cart, Add some products to purchase!');
+        }
     };
 
     return (
         <div style={{ padding: '20px' }}>
+            {purchaseMessage && <p>{purchaseMessage}</p>}
+
             {cartElements.length > 0 ? (
                 <div>
                     {cartElements.map((item, index) => (
@@ -48,6 +59,18 @@ const CartComponent = () => {
             ) : (
                 <p>Your cart is empty.</p>
             )}
+
+            <button onClick={handlePurchase} style={{ 
+                padding: '10px 20px', 
+                backgroundColor: 'green', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '5px', 
+                cursor: 'pointer',
+                marginTop: '20px'
+            }}>
+                Purchase
+            </button>
         </div>
     );
 };
