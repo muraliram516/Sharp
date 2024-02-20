@@ -1,21 +1,23 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Home from './Home';
-import Store from './Store';
-import About from './About';
-import CartComponent from './CartComponent';
 
 function App() {
   return (
-    <Router>
-      <Switch>
-        <Route path="/" exact component={Home} />
-        <Route path="/store" component={Store} />
-        <Route path="/about" component={About} />
-        <Route path="/CartComponent" component={CartComponent}/>
-      </Switch>
-    </Router>
-  );
+const [movies, setMovies] = useState([]);
+
+async function function fetchMoviesHandler(){
+const response = awaint fetch('https://swapi.dev/api/films')
+const data = await response.json();
+
+.then((data) => {
+const transformedMovies = data.results.maps((movieData) => {
+return {
+id: movieData.episode.title,
+openingText: movieData.opening_crawl,
+releaseDate: movieData.release_date,
+};
+});
+   setMovies(transformedMovies);  );
 }
 
 export default App;
