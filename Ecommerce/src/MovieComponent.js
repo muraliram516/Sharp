@@ -23,7 +23,7 @@ const MovieComponent = () => {
 
   const postData = async (newData) => {
     try {
-      const response = await fetch('https://your-api-endpoint.com/movies', {
+      const response = await fetch('https://crudcrud.com/api/f7da40356c6d48db83ba826551089bf4/unicorns', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -34,16 +34,30 @@ const MovieComponent = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      setMovies((prevMovies) => [...prevMovies, data]); // Assuming the POST request returns the new movie
+      setMovies((prevMovies) => [...prevMovies, data]);
     } catch (error) {
       console.error("Could not post data: ", error);
+    }
+  };
+
+  const deleteMovie = async (id) => {
+    try {
+      const response = await fetch(`https://crudcrud.com/api/f7da40356c6d48db83ba826551089bf4/unicorns/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      setMovies(movies.filter((movie) => movie.id !== id));
+    } catch (error) {
+      console.error("Could not delete the movie: ", error);
     }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     await postData(newMovie);
-    setNewMovie({ title: '', openingText: '', releaseDate: '' }); // Reset form after submission
+    setNewMovie({ title: '', openingText: '', releaseDate: '' });
   };
 
   const handleInputChange = (event) => {
@@ -76,12 +90,12 @@ const MovieComponent = () => {
         />
         <button type="submit">Add Movie</button>
       </form>
-      {/* Map through movies and display them */}
       {movies.map((movie, index) => (
         <div key={index}>
           <h3>{movie.title}</h3>
           <p>{movie.opening_crawl}</p>
           <p>{movie.release_date}</p>
+          <button onClick={() => deleteMovie(movie.episode_id)}>Delete Movie</button> {/* Replace episode_id with your movie id property */}
         </div>
       ))}
     </div>
