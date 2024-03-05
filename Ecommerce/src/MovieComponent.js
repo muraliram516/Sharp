@@ -6,7 +6,7 @@ const MovieComponent = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('https://swapi.dev/api/films/');
+      const response = await fetch('https://crudcrud.com/api/f7da40356c6d48db83ba826551089bf4/unicorns');
       if (!response.ok) {
         throw new Error('Network response was not ok: ' + response.statusText);
       }
