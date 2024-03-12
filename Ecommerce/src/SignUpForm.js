@@ -19,7 +19,7 @@ const SignUpForm = () => {
     setMessage('');
 
     // Placeholder for your sign-up API endpoint
-    const SIGN_UP_API = 'https://your-api-endpoint.com/signup';
+    const SIGN_UP_API = 'https://crudcrucd.com/signup';
     
     try {
       const response = await fetch(SIGN_UP_API, {
