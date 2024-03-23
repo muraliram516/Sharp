@@ -6,7 +6,7 @@ const AuthContext = createContext();
 
 // Step 2: AuthProvider component to wrap your application and provide authentication context
 const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(localStorage.getItem('token') || null);
+  const [token, setToken] = useState(() => localStorage.getItem('token') || null); // Retrieve token from localStorage
 
   // Logout function
   const logout = () => {
