@@ -1,5 +1,20 @@
 import React, { useState, useEffect, createContext, useContext, useRef } from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect, Link } from 'react-router-dom';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
 
 // Step 1: Create a context to manage authentication state
 const AuthContext = createContext();
@@ -17,11 +32,18 @@ const AuthProvider = ({ children }) => {
   };
 
   // Login function
-  const login = (newToken) => {
-    setToken(newToken);
-    localStorage.setItem('token', newToken);
-    // Set a timer for auto logout after 5 minutes
-    logoutTimeoutRef.current = setTimeout(logout, 5 * 60 * 1000); // 5 minutes in milliseconds
+  const login = async () => {
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      const result = await firebase.auth().signInWithPopup(provider);
+      const userToken = await result.user.getIdToken();
+      setToken(userToken);
+      localStorage.setItem('token', userToken);
+      // Set a timer for auto logout after 5 minutes
+      logoutTimeoutRef.current = setTimeout(logout, 5 * 60 * 1000); // 5 minutes in milliseconds
+    } catch (error) {
+      console.error('Login error:', error.message);
+    }
   };
 
   useEffect(() => {
@@ -47,21 +69,19 @@ const Login = () => {
   const { token, login } = useAuth();
   const [loggedIn, setLoggedIn] = useState(!!token); // Check if already logged in
 
-  const handleLogin = () => {
-    // Simulated login process, here you would typically make an API call to authenticate the user
-    const token = 'your_generated_token';
-    login(token);
+  const handleLogin = async () => {
+    await login();
     setLoggedIn(true);
   };
 
   if (loggedIn) {
-    return <Redirect to="/" />;
+    return <Redirect to="/products" />;
   }
 
   return (
     <div>
       <h2>Login</h2>
-      <button onClick={handleLogin}>Login</button>
+      <button onClick={handleLogin}>Login with Google</button>
     </div>
   );
 };
@@ -85,30 +105,6 @@ const Logout = () => {
 // Your App component
 function App() {
   const { token } = useAuth();
-  const [movies, setMovies] = useState([]);
-
-  useEffect(() => {
-    fetchMoviesHandler();
-  }, []); // Empty dependency array ensures the effect runs only once after the initial render
-
-  async function fetchMoviesHandler() {
-    try {
-      const response = await fetch('https://swapi.dev/api/films');
-      if (!response.ok) {
-        throw new Error('Failed to fetch movies');
-      }
-      const data = await response.json();
-      const transformedMovies = data.results.map((movieData) => ({
-        id: movieData.episode_id,
-        title: movieData.title,
-        openingText: movieData.opening_crawl,
-        releaseDate: movieData.release_date,
-      }));
-      setMovies(transformedMovies);
-    } catch (error) {
-      console.error('Error fetching movies:', error.message);
-    }
-  }
 
   return (
     <Router>
@@ -117,6 +113,9 @@ function App() {
           <ul>
             <li>
               <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/products">Products</Link>
             </li>
             {token ? (
               <li>
@@ -133,23 +132,11 @@ function App() {
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/logout" component={Logout} />
+          <Route path="/products">
+            {token ? <Products /> : <Redirect to="/login" />}
+          </Route>
           <Route path="/" exact>
-            {token ? (
-              <div>
-                <h1>Star Wars Movies</h1>
-                <ul>
-                  {movies.map((movie) => (
-                    <li key={movie.id}>
-                      <h2>{movie.title}</h2>
-                      <p>{movie.openingText}</p>
-                      <p>Release Date: {movie.releaseDate}</p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : (
-              <Redirect to="/login" />
-            )}
+            <Home />
           </Route>
         </Switch>
       </div>
@@ -157,8 +144,8 @@ function App() {
   );
 }
 
+
 export default () => (
   <AuthProvider>
     <App />
   </AuthProvider>
-);
