@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect, createContext, useContext, useRef } from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect, Link } from 'react-router-dom';
 
 // Step 1: Create a context to manage authentication state
@@ -7,15 +7,33 @@ const AuthContext = createContext();
 // Step 2: AuthProvider component to wrap your application and provide authentication context
 const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem('token') || null); // Retrieve token from localStorage
+  const logoutTimeoutRef = useRef(null);
 
   // Logout function
   const logout = () => {
     setToken(null);
     localStorage.removeItem('token');
+    clearTimeout(logoutTimeoutRef.current);
   };
 
+  // Login function
+  const login = (newToken) => {
+    setToken(newToken);
+    localStorage.setItem('token', newToken);
+    // Set a timer for auto logout after 5 minutes
+    logoutTimeoutRef.current = setTimeout(logout, 5 * 60 * 1000); // 5 minutes in milliseconds
+  };
+
+  useEffect(() => {
+    if (token) {
+      // Set a timer for auto logout after 5 minutes
+      logoutTimeoutRef.current = setTimeout(logout, 5 * 60 * 1000); // 5 minutes in milliseconds
+    }
+    return () => clearTimeout(logoutTimeoutRef.current);
+  }, [token]);
+
   return (
-    <AuthContext.Provider value={{ token, logout }}>
+    <AuthContext.Provider value={{ token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -26,13 +44,13 @@ const useAuth = () => useContext(AuthContext);
 
 // Login component
 const Login = () => {
-  const { token } = useAuth();
+  const { token, login } = useAuth();
   const [loggedIn, setLoggedIn] = useState(!!token); // Check if already logged in
 
   const handleLogin = () => {
     // Simulated login process, here you would typically make an API call to authenticate the user
     const token = 'your_generated_token';
-    localStorage.setItem('token', token);
+    login(token);
     setLoggedIn(true);
   };
 
